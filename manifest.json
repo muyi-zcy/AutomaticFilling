@@ -1,0 +1,32 @@
+{
+  "manifest_version": 3,
+  "name": "Automatic Filling",
+  "version": "0.1.0",
+  "description": "点击插件后选择输入框，设置内容，自动逐字输入。",
+  "icons": {
+    "16": "logo.png",
+    "32": "logo.png",
+    "48": "logo.png",
+    "128": "logo.png"
+  },
+  "permissions": ["storage", "activeTab", "scripting"],
+  "host_permissions": ["<all_urls>"],
+  "action": {
+    "default_icon": "logo.png",
+    "default_title": "Automatic Filling",
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}
+
+
+

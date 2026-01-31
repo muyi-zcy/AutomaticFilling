@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>逐字输入</title>
+    <style>
+      :root {
+        --bg: #f8fafc;
+        --surface: #ffffff;
+        --border: #e2e8f0;
+        --text: #1e293b;
+        --text-muted: #64748b;
+        --accent: #0f172a;
+        --accent-hover: #334155;
+        --radius: 10px;
+        --shadow: 0 1px 3px rgba(0,0,0,.06);
+        --shadow-lg: 0 4px 12px rgba(0,0,0,.08);
+      }
+      * { box-sizing: border-box; }
+      body {
+        font-family: "PingFang SC", "Microsoft YaHei", system-ui, -apple-system, sans-serif;
+        width: 320px;
+        margin: 0;
+        padding: 16px;
+        background: var(--bg);
+        color: var(--text);
+        font-size: 13px;
+        line-height: 1.5;
+      }
+      .card {
+        background: var(--surface);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        padding: 14px;
+        margin-bottom: 12px;
+      }
+      h1 {
+        font-size: 15px;
+        font-weight: 600;
+        margin: 0 0 8px 0;
+        letter-spacing: -0.02em;
+      }
+      .hint {
+        font-size: 12px;
+        color: var(--text-muted);
+        margin-bottom: 12px;
+        line-height: 1.45;
+      }
+      #text {
+        width: 100%;
+        min-height: 100px;
+        max-height: 180px;
+        padding: 10px 12px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        font: 12px/1.5 ui-monospace, "SF Mono", Menlo, Monaco, Consolas, monospace;
+        resize: vertical;
+        background: var(--surface);
+        color: var(--text);
+        transition: border-color .15s, box-shadow .15s;
+      }
+      #text:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(15,23,42,.08);
+      }
+      #text::placeholder { color: var(--text-muted); opacity: .8; }
+
+      .control-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+      .control-row:last-of-type { margin-bottom: 0; }
+      label { font-size: 12px; color: var(--text-muted); }
+      .speed-wrap {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex: 1;
+        min-width: 0;
+      }
+      input[type="range"] {
+        flex: 1;
+        height: 6px;
+        -webkit-appearance: none;
+        appearance: none;
+        background: var(--border);
+        border-radius: 3px;
+      }
+      input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: var(--accent);
+        cursor: pointer;
+        box-shadow: var(--shadow);
+      }
+      .wpm-block {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        flex-shrink: 0;
+      }
+      .wpm-value {
+        font-variant-numeric: tabular-nums;
+        font-weight: 600;
+        font-size: 16px;
+        color: var(--text);
+        line-height: 1.2;
+      }
+      .wpm-unit { font-size: 10px; color: var(--text-muted); }
+      .opt-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 10px;
+      }
+      input[type="checkbox"] {
+        width: 16px;
+        height: 16px;
+        accent-color: var(--accent);
+        cursor: pointer;
+      }
+      .opt-row label { cursor: pointer; color: var(--text); }
+
+      .actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 12px;
+      }
+      button {
+        flex: 1;
+        padding: 10px 14px;
+        font-size: 13px;
+        font-weight: 500;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background .15s, transform .05s;
+      }
+      button:active { transform: scale(0.98); }
+      #start {
+        background: var(--accent);
+        color: #fff;
+      }
+      #start:hover { background: var(--accent-hover); }
+      #stop {
+        background: var(--surface);
+        color: var(--text-muted);
+        border: 1px solid var(--border);
+        flex: 0 0 auto;
+      }
+      #stop:hover { background: #f1f5f9; color: var(--text); }
+
+      .status {
+        margin-top: 12px;
+        font-size: 12px;
+        color: var(--text-muted);
+        min-height: 18px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>逐字输入</h1>
+    <div class="hint">
+      输入或粘贴要填写的内容，设置速度与选项，点击「开始选择并输入」后到页面上点击目标输入框即可。
+    </div>
+
+    <div class="card">
+      <textarea
+        id="text"
+        placeholder="在此输入或粘贴要自动输入的内容（支持多行）"
+      ></textarea>
+
+      <div class="control-row">
+        <label>输入速度</label>
+        <div class="speed-wrap">
+          <input type="range" id="speed" min="30" max="300" value="120" step="10" />
+          <div class="wpm-block">
+            <span class="wpm-value" id="wpmDisplay">120</span>
+            <span class="wpm-unit">字/分钟</span>
+          </div>
+        </div>
+      </div>
+      <div class="opt-row">
+        <input type="checkbox" id="punctuationPause" />
+        <label for="punctuationPause">标点后停顿</label>
+      </div>
+      <div class="opt-row">
+        <input type="checkbox" id="autoEnter" />
+        <label for="autoEnter">输入完后自动回车</label>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button id="start">开始选择并输入</button>
+      <button id="stop">停止</button>
+    </div>
+    <div class="status" id="status"></div>
+
+    <script src="popup.js"></script>
+  </body>
+</html>
